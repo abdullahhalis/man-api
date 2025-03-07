@@ -1,0 +1,1 @@
+REST API to fetch manga/manhwa/manhua data
