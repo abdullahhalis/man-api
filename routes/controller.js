@@ -16,11 +16,14 @@ exports.getPopularToday = async (req, res) => {
     ).each((i, e) => {
       manList.push({
         title: $(e).find("a").attr("title"),
-        type: $(e).find("a > div.limit > span").attr("class").split(" ").pop(),
-        chapter: $(e).find("a > div.bigor div.epxs").text().split(" ").pop(),
+        type: $(e)
+            .find("a > div.limit > span.type")
+            .attr("class")
+            .match(/type\s*(\w+)/i)?.[1] || '-',
+          chapter: $(e).find("a > div.bigor div.epxs").text().match(/chapter\s*(.+)/i)?.[1] || '-',
         rating: $(e).find("a > div.bigor div.rt div.numscore").text(),
         image: $(e).find("a img").attr("src"),
-        slug: new URL($(e).find("a").attr("href")).pathname.match(/\/manga\/([^/]+)/)[1],
+        slug: new URL($(e).find("a").attr("href")).pathname.match(/\/manga\/([^/]+)/)?.[1] || '-',
       });
     });
 
@@ -50,14 +53,13 @@ exports.getManSearch = async (req, res) => {
         manList.push({
           title: $(e).find("a").attr("title"),
           type: $(e)
-            .find("a > div.limit > span")
+            .find("a > div.limit > span.type")
             .attr("class")
-            .split(" ")
-            .pop(),
-          chapter: $(e).find("a > div.bigor div.epxs").text().split(" ").pop(),
+            .match(/type\s*(\w+)/i)?.[1] || '-',
+          chapter: $(e).find("a > div.bigor div.epxs").text().match(/chapter\s*(.+)/i)?.[1] || '-',
           rating: $(e).find("a > div.bigor div.rt div.numscore").text(),
           image: $(e).find("a img").attr("src"),
-          slug: new URL($(e).find("a").attr("href")).pathname.match(/\/manga\/([^/]+)/)[1],
+          slug: new URL($(e).find("a").attr("href")).pathname.match(/\/manga\/([^/]+)/)?.[1] || '-',
         });
       }
     );
@@ -99,7 +101,7 @@ exports.getManDetails = async (req, res) => {
     $content.find("div.bixbox.bxcl.epcheck > div.eplister li").each((i, e) => {
       chapters.push({
         chapter: $(e).attr("data-num"),
-        slug: new URL($(e).find("div.eph-num > a").attr("href")).pathname.match(/([^/]+)/)[1],
+        slug: new URL($(e).find("div.eph-num > a").attr("href")).pathname.match(/([^/]+)/)?.[1] || '-',
         date: $(e).find("div.eph-num > a > span").last().text(),
       });
     });
