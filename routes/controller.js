@@ -1,7 +1,7 @@
 const response = require("../utils/response");
 const cheerio = require("cheerio");
 
-exports.getPopularToday = async (req, res) => {
+exports.getHome = async (req, res) => {
   try {
     const $ = await cheerio.fromURL("https://kiryuu01.com", {
       headers: {
@@ -9,12 +9,17 @@ exports.getPopularToday = async (req, res) => {
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
       },
     });
-    const manList = [];
+    const popularToday = [];
+    const latestUpdate = [];
+    const newSeries = [];
+    const weeklyPopular = [];
+    const monthlyPopular = [];
+    const alltimePopular = [];
 
     $(
       "#content > div.wrapper > div.hotslid > div > div.listupd.popularslider > div.popconslide div.bs"
     ).each((i, e) => {
-      manList.push({
+      popularToday.push({
         title: $(e).find("a").attr("title"),
         type: $(e)
             .find("a > div.limit > span.type")
@@ -27,7 +32,68 @@ exports.getPopularToday = async (req, res) => {
       });
     });
 
-    response(res, 200, "success", manList);
+    $(
+      "#content > div.wrapper > div.postbody > div:nth-child(6)  > div.listupd div.utao"
+    ).each((i, e) => {
+      latestUpdate.push({
+        title: $(e).find("div.uta > div.imgu > a").attr("title"),
+        image: $(e).find("div.uta > div.imgu > a img").attr("src"),
+        chapter: $(e).find("div.uta > div.luf > ul > li:nth-child(1) > a").text(),
+        slug: new URL($(e).find("div.uta > div.imgu > a").attr("href")).pathname.match(/\/manga\/([^/]+)/)?.[1] || '-',
+      })
+    })
+
+    $(
+      "#sidebar > div:nth-child(6) > span > div > ul li"
+    ).each((i, e) => {
+      newSeries.push({
+        title: $(e).find("div.imgseries > a > img").attr("title"),
+        image: $(e).find("div.imgseries > a > img").attr("src"),
+        slug: new URL($(e).find("div.imgseries > a").attr("href")).pathname.match(/\/manga\/([^/]+)/)?.[1] || '-',
+      })
+    })
+
+    $(
+      "#sidebar > div:nth-child(2) > div#wpop-items > div.serieslist.pop.wpop.wpop-weekly > ul li"
+    ).each((i, e) => {
+      weeklyPopular.push({
+        title: $(e).find("div.imgseries > a > img").attr("title"),
+        image: $(e).find("div.imgseries > a > img").attr("src"),
+        rating: $(e).find("div.leftseries > div.rt div.numscore").text(),
+        slug: new URL($(e).find("div.imgseries > a").attr("href")).pathname.match(/\/manga\/([^/]+)/)?.[1] || '-',
+      })
+    })
+
+    $(
+      "#sidebar > div:nth-child(2) > div#wpop-items > div.serieslist.pop.wpop.wpop-monthly > ul li"
+    ).each((i, e) => {
+      monthlyPopular.push({
+        title: $(e).find("div.imgseries > a > img").attr("title"),
+        image: $(e).find("div.imgseries > a > img").attr("src"),
+        rating: $(e).find("div.leftseries > div.rt div.numscore").text(),
+        slug: new URL($(e).find("div.imgseries > a").attr("href")).pathname.match(/\/manga\/([^/]+)/)?.[1] || '-',
+      })
+    })
+
+    $(
+      "#sidebar > div:nth-child(2) > div#wpop-items > div.serieslist.pop.wpop.wpop-alltime > ul li"
+    ).each((i, e) => {
+      alltimePopular.push({
+        title: $(e).find("div.imgseries > a > img").attr("title"),
+        image: $(e).find("div.imgseries > a > img").attr("src"),
+        rating: $(e).find("div.leftseries > div.rt div.numscore").text(),
+        slug: new URL($(e).find("div.imgseries > a").attr("href")).pathname.match(/\/manga\/([^/]+)/)?.[1] || '-',
+      })
+    })
+
+    response(res, 200, "success", {
+      popularToday,
+      latestUpdate,
+      newSeries,
+      weeklyPopular,
+      monthlyPopular,
+      alltimePopular,
+    });
   } catch (error) {
     response(res, 500, error.message);
   }
