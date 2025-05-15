@@ -1,9 +1,11 @@
 const response = require("../utils/response");
 const cheerio = require("cheerio");
+const { baseUrl } = require("../utils/constants");
 
 exports.getHome = async (req, res) => {
+  const { page = 1 } = req.query;
   try {
-    const $ = await cheerio.fromURL("https://kiryuu01.com", {
+    const $ = await cheerio.fromURL(`${baseUrl}/page/${page}`, {
       headers: {
         "user-agent":
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
@@ -44,7 +46,7 @@ exports.getHome = async (req, res) => {
     })
 
     $(
-      "#sidebar > div:nth-child(6) > span > div > ul li"
+      "#sidebar > div:nth-child(7) > span > div > ul li"
     ).each((i, e) => {
       newSeries.push({
         title: $(e).find("div.imgseries > a > img").attr("title"),
@@ -54,7 +56,7 @@ exports.getHome = async (req, res) => {
     })
 
     $(
-      "#sidebar > div:nth-child(2) > div#wpop-items > div.serieslist.pop.wpop.wpop-weekly > ul li"
+      "div#wpop-items > div.serieslist.pop.wpop.wpop-weekly > ul li"
     ).each((i, e) => {
       weeklyPopular.push({
         title: $(e).find("div.imgseries > a > img").attr("title"),
@@ -65,7 +67,7 @@ exports.getHome = async (req, res) => {
     })
 
     $(
-      "#sidebar > div:nth-child(2) > div#wpop-items > div.serieslist.pop.wpop.wpop-monthly > ul li"
+      "div#wpop-items > div.serieslist.pop.wpop.wpop-monthly > ul li"
     ).each((i, e) => {
       monthlyPopular.push({
         title: $(e).find("div.imgseries > a > img").attr("title"),
@@ -76,7 +78,7 @@ exports.getHome = async (req, res) => {
     })
 
     $(
-      "#sidebar > div:nth-child(2) > div#wpop-items > div.serieslist.pop.wpop.wpop-alltime > ul li"
+      "div#wpop-items > div.serieslist.pop.wpop.wpop-alltime > ul li"
     ).each((i, e) => {
       alltimePopular.push({
         title: $(e).find("div.imgseries > a > img").attr("title"),
@@ -104,7 +106,7 @@ exports.getManSearch = async (req, res) => {
     const { s, page = 1 } = req.query;
 
     const $ = await cheerio.fromURL(
-      `https://kiryuu01.com/page/${page}/?s=${s}`,
+      `${baseUrl}/page/${page}/?s=${s}`,
       {
         headers: {
           "user-agent":
@@ -140,7 +142,7 @@ exports.getManDetails = async (req, res) => {
   const slug = req.params.slug;
 
   try {
-    const $ = await cheerio.fromURL(`https://kiryuu01.com/manga/${slug}`, {
+    const $ = await cheerio.fromURL(`${baseUrl}/manga/${slug}`, {
       headers: {
         "user-agent":
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
@@ -208,7 +210,7 @@ exports.getManDetails = async (req, res) => {
 exports.getChapter = async (req, res) => {
   const slug = req.params.slug
   try {
-     const $ = await cheerio.fromURL(`https://kiryuu01.com/${slug}`, {
+     const $ = await cheerio.fromURL(`${baseUrl}/${slug}`, {
         scriptingEnabled: false,
         headers: {
           "user-agent":
