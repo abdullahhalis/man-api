@@ -1,0 +1,1 @@
+exports.baseUrl = process.env.TARGET_BASE_URL || '';
