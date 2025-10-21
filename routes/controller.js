@@ -29,7 +29,7 @@ exports.getHome = async (req, res) => {
             .match(/type\s*(\w+)/i)?.[1] || '-',
           chapter: $(e).find("a > div.bigor div.epxs").text().match(/chapter\s*(.+)/i)?.[1] || '-',
         rating: $(e).find("a > div.bigor div.rt div.numscore").text(),
-        image: $(e).find("a img").attr("src"),
+        image: $(e).find("a img").attr("data-lzl-src") || $(e).find("a img").attr("src"),
         slug: new URL($(e).find("a").attr("href")).pathname.match(/\/manga\/([^/]+)/)?.[1] || '-',
       });
     });
@@ -39,18 +39,18 @@ exports.getHome = async (req, res) => {
     ).each((i, e) => {
       latestUpdate.push({
         title: $(e).find("div.uta > div.imgu > a").attr("title"),
-        image: $(e).find("div.uta > div.imgu > a img").attr("src"),
+        image: $(e).find("div.uta > div.imgu > a img").attr("data-lzl-src") || $(e).find("div.uta > div.imgu > a img").attr("src"),
         chapter: $(e).find("div.uta > div.luf > ul > li:nth-child(1) > a").text(),
         slug: new URL($(e).find("div.uta > div.imgu > a").attr("href")).pathname.match(/\/manga\/([^/]+)/)?.[1] || '-',
       })
     })
 
     $(
-      "#sidebar > div:nth-child(7) > span > div > ul li"
+      "#sidebar > div.section > span > div.serieslist > ul li"
     ).each((i, e) => {
       newSeries.push({
         title: $(e).find("div.imgseries > a > img").attr("title"),
-        image: $(e).find("div.imgseries > a > img").attr("src"),
+        image: $(e).find("div.imgseries > a > img").attr("data-lzl-src") || $(e).find("div.imgseries > a > img").attr("src"),
         slug: new URL($(e).find("div.imgseries > a").attr("href")).pathname.match(/\/manga\/([^/]+)/)?.[1] || '-',
       })
     })
@@ -60,7 +60,7 @@ exports.getHome = async (req, res) => {
     ).each((i, e) => {
       weeklyPopular.push({
         title: $(e).find("div.imgseries > a > img").attr("title"),
-        image: $(e).find("div.imgseries > a > img").attr("src"),
+        image: $(e).find("div.imgseries > a > img").attr("data-lzl-src") || $(e).find("div.imgseries > a > img").attr("src"),
         rating: $(e).find("div.leftseries > div.rt div.numscore").text(),
         slug: new URL($(e).find("div.imgseries > a").attr("href")).pathname.match(/\/manga\/([^/]+)/)?.[1] || '-',
       })
@@ -71,7 +71,7 @@ exports.getHome = async (req, res) => {
     ).each((i, e) => {
       monthlyPopular.push({
         title: $(e).find("div.imgseries > a > img").attr("title"),
-        image: $(e).find("div.imgseries > a > img").attr("src"),
+        image: $(e).find("div.imgseries > a > img").attr("data-lzl-src") || $(e).find("div.imgseries > a > img").attr("src"),
         rating: $(e).find("div.leftseries > div.rt div.numscore").text(),
         slug: new URL($(e).find("div.imgseries > a").attr("href")).pathname.match(/\/manga\/([^/]+)/)?.[1] || '-',
       })
@@ -82,7 +82,7 @@ exports.getHome = async (req, res) => {
     ).each((i, e) => {
       alltimePopular.push({
         title: $(e).find("div.imgseries > a > img").attr("title"),
-        image: $(e).find("div.imgseries > a > img").attr("src"),
+        image: $(e).find("div.imgseries > a > img").attr("data-lzl-src") || $(e).find("div.imgseries > a > img").attr("src"),
         rating: $(e).find("div.leftseries > div.rt div.numscore").text(),
         slug: new URL($(e).find("div.imgseries > a").attr("href")).pathname.match(/\/manga\/([^/]+)/)?.[1] || '-',
       })
@@ -126,7 +126,7 @@ exports.getManSearch = async (req, res) => {
             .match(/type\s*(\w+)/i)?.[1] || '-',
           chapter: $(e).find("a > div.bigor div.epxs").text().match(/chapter\s*(.+)/i)?.[1] || '-',
           rating: $(e).find("a > div.bigor div.rt div.numscore").text(),
-          image: $(e).find("a img").attr("src"),
+          image: $(e).find("a img").attr("data-lzl-src") || $(e).find("a img").attr("src"),
           slug: new URL($(e).find("a").attr("href")).pathname.match(/\/manga\/([^/]+)/)?.[1] || '-',
         });
       }
@@ -181,6 +181,8 @@ exports.getManDetails = async (req, res) => {
         .text()
         .trim(),
       image: $content
+        .find("div.seriestucon > div.seriestucontent div.thumb img")
+        .attr("data-lzl-src") || $content
         .find("div.seriestucon > div.seriestucontent div.thumb img")
         .attr("src"),
       rating: $content
