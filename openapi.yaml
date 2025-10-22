@@ -1,0 +1,231 @@
+openapi: "3.0.0"
+info:
+  title: "Man-API"
+  version: "1.0.0"
+  description: >
+    REST API to fetch Manga / Manhwa / Manhua data in Bahasa Indonesia via scraping.
+    This is an unofficial scraper API for personal/educational use.
+  contact:
+    name: "abdullahhalis"
+    url: "https://github.com/abdullahhalis"
+servers:
+  - url: "http://localhost:5000"
+    description: "Local development"
+  - url: "https://man-api-umber.vercel.app"
+    description: "Staging server"
+paths:
+  /:
+    get:
+      summary: "Welcome route"
+      tags: [Welcome]     
+      responses:
+        '200':
+          description: "Welcome message"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Welcome to man-api, REST API to fetch manga/manhwa/manhua data, go to /api-docs for more info"
+  /manapp:
+    get:
+      summary: "Get Home (latest & popular manga)"
+      tags: [Home]
+      parameters:
+      - name: page
+        in: query
+        description: "Page number for pagination (default is 1)"
+        required: false
+        schema:
+          type: integer
+          default: 1
+      responses:
+        '200':
+          description: "List of latest & popular manga"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:            
+                    $ref: '#/components/schemas/status'
+                  data:
+                    type: object
+                    properties:
+                      popularToday:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/mangaItem'
+                      latestUpdates:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/mangaItem'
+                      newSeries:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/mangaItem'
+                      weeklyPopular:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/mangaItem'
+                      monthlyPopular:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/mangaItem'
+                      alltimePopular:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/mangaItem'
+  /manapp/search:
+    get:
+      summary: "Search manga by keyword"
+      tags: [Search]
+      parameters:
+        - name: s
+          in: query
+          description: "Keyword to search manga title"
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: "Page number for pagination (default is 1)"
+          required: false
+          schema:
+            type: integer
+            default: 1  
+      responses:
+        '200':
+          description: "Search results"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/status'
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/mangaItem'
+  /manapp/detail/{slug}:
+    get:
+      summary: "Get manga details by slug"
+      tags: ["Manga Detail"]
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+          description: "Unique identifier for manga"
+      responses:
+        '200':
+          description: "Manga detail"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/status'
+                  data:
+                    type: object
+                    properties:
+                      title: { type: string, example: "One Piece" }
+                      altTitle: { type: string, nullable: true }
+                      image: { type: string, example: https://example.com/image.jpg }
+                      rating: { type: string, nullable: true }
+                      synopsis: { type: string, example: "Long synopsis text..." }
+                      status: { type: string, nullable: true }
+                      type: { type: string, nullable: true }
+                      released: { type: string, nullable: true }
+                      author: { type: string, nullable: true }
+                      artist: { type: string, nullable: true }
+                      updatedAt: { type: string, nullable: true }
+                      genre:
+                        type: array
+                        items: { type: string }
+                      chapters:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            chapter: { type: string }
+                            slug: { type: string }
+                            date: { type: string }
+  /manapp/detail/chapter/{slug}:
+    get:
+      summary: "Get chapter pages (images) by chapter slug"
+      tags: ["Chapter Detail"]
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+          description: "Unique chapter identifier"
+      responses:
+        '200':
+          description: "Chapter data with image URLs"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/status'
+                  data:
+                    type: object
+                    properties:
+                      title: { type: string, example: "One Piece Chapter 1050" }
+                      images:
+                        type: array
+                        items: { type: string, example: https://example.com/page1.jpg }
+
+components:
+  schemas:
+    status:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: success
+    mangaItem:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "One Piece"
+        image:
+          type: string
+          example: https://example.com/image.jpg
+        slug:
+          type: string
+          example: one-piece
+        type:
+          type: string
+          nullable: true
+          example: Manga
+        rating:
+          type: string
+          nullable: true
+          example: "4.5"
+        chapter:
+          type: string
+          nullable: true
+          example: "Chapter 1050"
+
+tags:
+  - name: Welcome
+    description: "Welcome endpoint to confirm API is live"
+  - name: Home
+    description: "Endpoints related to home page data"
+  - name: Search
+    description: "Endpoints for searching manga"
+  - name: "Manga Detail"
+    description: "Endpoints for fetching manga details"
+  - name: "Chapter Detail"
+    description: "Endpoints for fetching chapter details"
