@@ -3,8 +3,9 @@ const express = require('express');
 const cors = require('cors');
 const router = require('./routes/route');
 const swaggerUi = require('swagger-ui-express');
+const path = require('path');
 const YAML = require('yamljs');
-const swaggerDocument = YAML.load('./openapi.yaml');
+const swaggerDocument = YAML.load(path.join(__dirname, 'openapi.yaml'));
 
 const app = express();
 const port = process.env.PORT || 5000;
