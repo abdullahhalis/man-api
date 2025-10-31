@@ -153,17 +153,23 @@ paths:
                             chapter: { type: string }
                             slug: { type: string }
                             date: { type: string }
-  /manapp/detail/chapter/{slug}:
+  /manapp/detail/{mangaSlug}/{chapterSlug}:
     get:
       summary: "Get chapter pages (images) by chapter slug"
-      tags: ["Chapter Detail"]
+      tags: ["Manga Detail"]
       parameters:
-        - name: slug
+        - name: mangaSlug
           in: path
           required: true
           schema:
             type: string
-          description: "Unique chapter identifier"
+          description: "Unique identifier for Manga"
+        - name: chapterSlug
+          in: path
+          required: true
+          schema: 
+            type: string
+          description: "Unique identifier for Chapter"
       responses:
         '200':
           description: "Chapter data with image URLs"
@@ -227,5 +233,3 @@ tags:
     description: "Endpoints for searching manga"
   - name: "Manga Detail"
     description: "Endpoints for fetching manga details"
-  - name: "Chapter Detail"
-    description: "Endpoints for fetching chapter details"
