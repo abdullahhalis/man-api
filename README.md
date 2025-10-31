@@ -18,7 +18,7 @@ https://man-api-umber.vercel.app/
 | GET | [/manapp](https://man-api-umber.vercel.app/manapp) | Fetch lates & popular manga |
 | GET | [/manapp/search](https://man-api-umber.vercel.app/manapp/search?s=one&page=1) | Search manga by keyword |
 | GET | [/manapp/detail/:slug](https://man-api-umber.vercel.app/manapp/detail/one-piece) | Fetch manga details by slug |
-| GET | [/manapp/detail/chapter/:slug](https://man-api-umber.vercel.app/manapp/detail/chapter/one-piece-chapter-1162) | Fetch chapter details by chapter slug |
+| GET | [/manapp/detail/:mangaSlug/:chapterSlug](https://man-api-umber.vercel.app/manapp/detail/one-piece/chapter-1163.653200) | Fetch chapter details by chapter slug |
 
 ---
 
