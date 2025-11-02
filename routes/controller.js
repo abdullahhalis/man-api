@@ -49,7 +49,7 @@ exports.getHome = async (req, res) => {
           title: $data.find(`div > a:nth-child(1)`).text().trim(),
           image: $data.find(`a > div.w-full > img`).attr("src"),
           type: $data.find(`a > div.absolute.bottom-1 > img`).attr("alt"),
-          chapter: $data.find(`div > a:nth-child(2) > div > p`).text().trim(),
+          chapter: $data.find(`div > a:nth-child(2) > div > p`).text().trim().match(/chapter\s*(.+)/i)?.[1],
           slug:
             new URL($data.find("a").attr("href")).pathname.match(
               /\/manga\/([^/]+)/
@@ -136,10 +136,23 @@ exports.getManSearch = async (req, res) => {
   try {
     const { s, page = 1 } = req.query;
 
+    const $home = await cheerio.fromURL(
+      `${baseUrl}/?page=${page}&pagedfor=latest#latest-list`,
+      {
+        headers: {
+          "user-agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        },
+      }
+    );
+
+    const url = $home(`form [hx-target="#searchModalContent"]`).attr("hx-post");
+    const nonce = url.match(/nonce=([^&]+)/)
+
     const resp = await axios.post(
       `${baseUrl}/wp-admin/admin-ajax.php?action=advanced_search`,
       new URLSearchParams({
-        action: "advanced_search",
+        nonce: nonce[1],
         query: s,
         page: page,
         order: "desc",
@@ -233,7 +246,7 @@ exports.getManDetails = async (req, res) => {
         .text()
         .trim(),
       synopsis: $(
-        `div#tabpanel-description [itemprop="description"][data-show="true"]`
+        `div#tabpanel-description [itemprop="description"][data-show="false"] > p`
       )
         .text()
         .trim(),
