@@ -100,6 +100,92 @@ Reasons:
 
 ---
 
+## 🧠 Real-World Engineering Challenges
+Building this project introduced practical backend challenges:
+
+### Anti-Scraping Protection
+Issues encountered:
+- Cloud IP blocking
+- Bot detection systems
+- Request rate limits
+- Temporary access denial
+
+### Infrastructure Constraints
+Serverless deployment limitations:
+- Shared IP ranges
+- No background workers
+- Cold start delays
+- Limited execution time
+
+### Data Reliability Issues
+Scraping problems:
+- HTML structure changes
+- Missing fields
+- Lazy loaded images
+- Broken image hosts
+
+---
+
+## 🔧 Mitigation Strategies
+Solutions implemented or explored:
+- Custom request headers
+- Retry mechanism
+- Defensive parsing strategy
+- Delay between requests
+- Null safety mapping
+
+Potential production solutions:
+- Rotating proxy pool
+- Redis caching layer
+- Background scraping jobs
+- Database persistence
+- Queue workers
+- Dedicated VPS deployment
+
+---
+
+## ⚠️ Known Limitations
+Current limitations:
+- No caching layer
+- No database persistence
+- Depends on source HTML structure
+- No rate limiting yet
+- No authentication
+- Serverless scraping constraints
+
+This project is intended as a learning architecture rather than a production scraper.
+
+---
+
+## 🎯 What This Project Demonstrates
+Technical capabilities shown:
+- REST API design
+- Web scraping architecture
+- Data normalization
+- Failure handling
+- Infrastructure awareness
+- Backend tradeoff decisions
+- Client-oriented API design
+
+---
+## 📈 Future Improvements
+Planned improvements:
+- Redis caching
+- Rate limiting
+- Background scraping scheduler
+- Database integration
+- Monitoring & logging
+- Source failover strategy
+- Content indexing
+- Recommendation engine
+
+---
+## 📱 Related Project
+Mobile client:
+
+[Manapp](https://github.com/abdullahhalis/manapp)
+
+---
 ## ⚠️ Disclaimer
 This project is **an unofficial scraper API** and is **not affiliated, endorsed, or supported** by any manga/manhwa/manhua website or publisher.
 It is intended **solely for personal and educational use** — for learning about web scraping, API architecture, and data structuring.
