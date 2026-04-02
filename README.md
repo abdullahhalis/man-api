@@ -1,4 +1,4 @@
-# 🧩 Man-API
+# Man-API
 REST API to fetch Manga/Manhwa/Manhua data in Bahasa Indonesia powered by a custom scraping pipeline.
 
 Man-API is a backend service built to aggregate manga data from a public source, normalize the structure, and expose it through a clean REST API for mobile applications (specifically the [Manapp](https://github.com/abdullahhalis/manapp) reader application).
@@ -25,12 +25,11 @@ This project demonstrates backend engineering skills including scraping architec
 ```
 https://man-api-umber.vercel.app/
 ```
-### API Documentaion
+### API Documentation
 ```
 https://man-api-umber.vercel.app/api-docs
 ```
->⚠️ Note
-
+>⚠️ Note <br>
 >Some API endpoints may occasionally fail due to IP blocking from source websites (anti-scraping protection). The documentation endpoint remains accessible. This is a known limitation of scraper systems deployed on shared cloud infrastructure.
 
 ---
@@ -39,17 +38,46 @@ https://man-api-umber.vercel.app/api-docs
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | [/api-docs](https://man-api-umber.vercel.app/api-docs) | Interactive API documentation |
-| GET | [/manapp](https://man-api-umber.vercel.app/manapp) | Fetch lates & popular manga |
+| GET | [/manapp](https://man-api-umber.vercel.app/manapp) | Fetch latest & popular manga |
 | GET | [/manapp/search](https://man-api-umber.vercel.app/manapp/search?s=one&page=1) | Search manga by keyword |
 | GET | [/manapp/detail/:slug](https://man-api-umber.vercel.app/manapp/detail/one-piece) | Fetch manga details by slug |
 | GET | [/manapp/detail/:mangaSlug/:chapterSlug](https://man-api-umber.vercel.app/manapp/detail/one-piece/chapter-1163.653200) | Fetch chapter details by chapter slug |
+
+### Example Requests (Search Manga)
+```bash
+curl -X GET https://man-api-umber.vercel.app/manapp/search?s=one%20piece&page=1
+```
+### Example Response:
+```json
+{
+    "status": {
+        "code": 200,
+        "message": "success"
+    },
+    "data": [
+        {
+            "title": "One Piece",
+            "chapter": "1178",
+            "rating": "9",
+            "image": "https://cdn.manga-source.com/images/one-piece.jpg",
+            "slug": "one-piece"
+        }
+    ]
+}
+```
+
+> ⚠️ Note <br>
+>Routes currently use `/manapp` prefix as the API was originally built to support the Manapp mobile client. Future versions may generalize the route structure.
 
 ---
 ## 📦 Response Format
 All responses follow a consistent structure:
 ```json
 {
-  "status": "success",
+  "status": {
+    "code": 200,
+    "message": "success",
+  },
   "data": {}
 }
 ```
@@ -58,8 +86,68 @@ All responses follow a consistent structure:
 - Easy parsing for clients
 - Error safety
 - Future extensibility
+---
+
+## 🏗️ Architecture
+System flow:
+
+```mermaid
+flowchart LR
+
+A[Source Websites] --> B[Man-API Backend]
+B --> C[Client Apps]
+
+subgraph Man-API
+D[Express REST API]
+E[Scraping Logic
+Axios + Cheerio]
+F[Data Parsing & Normalization]
+
+D --> E
+E --> F
+F --> D
+end
+```
+
+
+### Scraping Layer
+Responsibilities:
+- Extract manga metadata
+- Extract chapter lists
+- Extract reader images
+- Handle pagination scraping
+- Handle HTML structure inconsistencies
+
+### Data Processing Layer
+Responsibilities:
+- Data normalization
+- Field cleaning
+- Slug generation
+- Null safety mapping
+- Response formatting
+
+### API Layer
+Responsibilities:
+- REST endpoint exposure
+- Query handling
+- Error handling
+- Response consistency
+- Client optimization
+
+### Request Flow Diagram
+```mermaid
+
+sequenceDiagram
+
+Client->>API: GET /manapp/detail/one-piece
+API->>Source: Fetch HTML
+Source-->>API: Return HTML
+API->>API: Parse data
+API-->>Client: JSON response
+```
 
 ---
+
 ## 🛠️ Tech Stack
 ### Backend
 - Node.js
@@ -73,7 +161,7 @@ All responses follow a consistent structure:
 - Swagger
 
 ### Deployment
-- vercel
+- Vercel
 
 ---
 
@@ -181,14 +269,26 @@ Planned improvements:
 
 ---
 ## 📱 Related Project
-Mobile client:
+Mobile client: [Manapp](https://github.com/abdullahhalis/manapp)
 
-[Manapp](https://github.com/abdullahhalis/manapp)
+---
+
+## 📚 Lessons Learned
+Key takeaways from building this project:
+- Scraping reliability is harder than scraping itself
+- Data consistency is harder than data collection
+- Backend must assume failure cases
+- Infrastructure affects scraper stability
+- API design should simplify client complexity
 
 ---
 ## ⚠️ Disclaimer
-This project is **an unofficial scraper API** and is **not affiliated, endorsed, or supported** by any manga/manhwa/manhua website or publisher.
-It is intended **solely for personal and educational use** — for learning about web scraping, API architecture, and data structuring.
+This project is an unofficial scraper API.
+- Not affiliated with any publisher
+- Not affiliated with any manga provider
+- For educational purposes only
+- Demonstrates scraping & backend architecture concepts
 
-Please respect the original content owners and **do not use this API for commercial or copyright-infringing purposes**.  
-All rights to the scraped content belong to their respective owners.
+All rights belong to their respective content owners.
+
+Please respect original content owners.
