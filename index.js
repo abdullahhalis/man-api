@@ -13,6 +13,7 @@ const swaggerDocument = YAML.load(path.join(__dirname, 'openapi.yaml'));
 
 app.use(cors())
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 app.use('/api-docs', swaggerUi.serveFiles(swaggerDocument), swaggerUi.setup(swaggerDocument, {
   customCss: '.swagger-ui .topbar { display: none }, '
@@ -20,4 +21,4 @@ app.use('/api-docs', swaggerUi.serveFiles(swaggerDocument), swaggerUi.setup(swag
 
 app.use(router);
 
-app.listen(port, () => console.log("Server listen on port " + port));
+app.listen(port, "0.0.0.0", () => console.log("Server listen on port " + port));
